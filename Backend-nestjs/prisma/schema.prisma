@@ -4,12 +4,12 @@ generator client {
 
 generator client_frontend {
   provider = "prisma-client-js"
-  output   = "../../Front-end/node_modules/.prisma/client"
+  output   = "../../Frontend-nextjs/node_modules/.prisma/client"
 }
 
 generator zod {
   provider = "prisma-zod-generator"
-  output   = "../../Front-end/src/types/generated-zod"
+  output   = "../../Frontend-nextjs/src/types/generated-zod"
   config   = "./zod-generator.config.json"
 }
 

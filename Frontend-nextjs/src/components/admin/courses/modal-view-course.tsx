@@ -10,11 +10,14 @@ import { useSections } from "@/hooks/useSection";
 import { formatDate, formatDuration } from "@/lib/utils";
 import { CourseTypeSchema, LevelSchema } from "@/types/generated-zod/schemas";
 import { CourseType as ICourseType } from "@/types/generated-zod/schemas/models/Course.schema"
+import { TagType } from "@/types/generated-zod/schemas/models/Tag.schema";
 
 interface ModalViewCourseProps {
     open: boolean;
     closeDialog: () => void;
-    course: ICourseType;
+    course: ICourseType & {
+        tags?: TagType[];
+    };
 }
 
 export default function ModalViewCourse({ open, closeDialog, course }: ModalViewCourseProps) {
@@ -142,7 +145,7 @@ export default function ModalViewCourse({ open, closeDialog, course }: ModalView
                             <div className="flex items-center justify-between py-2.5">
                                 <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"><Tag className="h-3.5 w-3.5" /> Tag:</span>
                                 <div className="flex gap-2 font-medium">
-                                    {course?.tags.map((tag: any) => (
+                                    {course?.tags?.map((tag: any) => (
                                         <Badge key={tag.id} variant={"secondary"} className="text-xs">
                                             {tag.name}
                                         </Badge>

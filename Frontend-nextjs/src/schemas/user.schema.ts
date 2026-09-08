@@ -10,8 +10,7 @@ export const createUserSchema = UserSchema.pick({
     password: true,
     name: true,
     phone: true,
-    isActive: true,
-    roles: true
+    isActive: true
 })
     .extend({
         email: z

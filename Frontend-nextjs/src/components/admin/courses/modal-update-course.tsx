@@ -44,7 +44,9 @@ interface ModalUpdateCourseProps {
     closeDialog: () => void;
     tags: TagType[];
     instructors: UserType[];
-    course: ICourseType;
+    course: ICourseType & {
+    tags?: TagType[];
+    };
 }
 
 export default function ModalUpdateCourse({ open, closeDialog, tags, instructors, course }: ModalUpdateCourseProps) {

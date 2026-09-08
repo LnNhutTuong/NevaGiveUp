@@ -7,12 +7,12 @@ import { Calendar, CircleCheck, Clock, Lock, Mail, MapPinHouse, PhoneCall, Shiel
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
-import { UserType } from "@/types/generated-zod/schemas/models/User.schema";
+import { AdminUserType } from "@/types/user";
 
 interface ModalViewUserProps {
     open: boolean;
     closeDialog: () => void;
-    data: UserType;
+    data: AdminUserType;
 }
 
 export default function ModalViewUser({ open, closeDialog, data }: ModalViewUserProps) {
@@ -67,7 +67,7 @@ export default function ModalViewUser({ open, closeDialog, data }: ModalViewUser
                             Phương thức đăng nhập
                         </span>
                         {
-                            user.provider.map((item) => (
+                            user.provider.map((item: string) => (
                                 <Badge key={item} variant="outline" className="text-xs font-medium mt-1 px-2.5 py-1 mr-1">
                                     {item}
                                 </Badge>

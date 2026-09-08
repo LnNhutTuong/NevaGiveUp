@@ -24,7 +24,7 @@ import { DataTableSelectedToolbar } from "@/components/shared/data-table-selecti
 import { toast } from "sonner";
 import { RoleSchema } from "@/types/generated-zod/schemas";
 import { SYSTEM_ROLES } from "@/constants/roles.constant";
-import { UserType } from "@/types/generated-zod/schemas/models/User.schema";
+import { AdminUserType } from "@/types/user";
 import { RoleType } from "@/types/generated-zod/schemas/models/Role.schema";
 export default function User() {
     const [filters, setFilters] = useState<FindAllQueryParams>({
@@ -37,19 +37,19 @@ export default function User() {
     const { mutate: bulkUpdateStatus } = useBulkUpdateStatus();
     const { mutate: bulkDelete } = useBulkDelete();
     //count
-    const adminCount = users?.filter((user: UserType) =>
+    const adminCount = users?.filter((user: AdminUserType) =>
         user.roles.some(
             (role: RoleType) => role.name === SYSTEM_ROLES.ADMIN
         )
     ).length ?? 0;
 
-    const instructorCount = users?.filter((user: UserType) =>
+    const instructorCount = users?.filter((user: AdminUserType) =>
         user.roles.some(
             (role: RoleType) => role.name === SYSTEM_ROLES.INSTRUCTOR
         )
     ).length ?? 0;
 
-    const studentCount = users?.filter((user: UserType) =>
+    const studentCount = users?.filter((user: AdminUserType) =>
         user.roles.some(
             (role: RoleType) => role.name === SYSTEM_ROLES.STUDENT
         )
@@ -190,7 +190,7 @@ export default function User() {
 
     const handleBulkDelete = (selectedUsers: any, table: any) => {
         const ids = selectedUsers.map((u: any) => u.id)
-        if (selectedUsers.some((user: UserType) => user.roles.some((role: RoleType) => role.name === SYSTEM_ROLES.ADMIN))) {
+        if (selectedUsers.some((user: AdminUserType) => user.roles.some((role: RoleType) => role.name === SYSTEM_ROLES.ADMIN))) {
             toast.error("Không thể xóa admin");
             return;
         }

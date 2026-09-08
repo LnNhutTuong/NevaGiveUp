@@ -25,7 +25,9 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { cn } from "@/lib/utils";
 
 export default function ModalEditUser({ open, closeDialog, data }: { open: boolean, closeDialog: () => void, data: UserType }) {
-    const user = data as UserType;
+    const user = data as UserType & {
+        roles?: any[];
+    };
     const Role = SYSTEM_ROLES;
     const form = useForm<IUpdateUserInput, any, IUpdateUser>({
         resolver: zodResolver(UpdateUserSchema),
