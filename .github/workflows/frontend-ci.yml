@@ -4,10 +4,13 @@ on:
   push:
     branches:
       - main
+      - CI/CD
   pull_request:
     branches:
       - main
+      - CI/CD
 
+ 
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,6 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -27,7 +31,11 @@ jobs:
           cache: npm
           cache-dependency-path: Frontend-nextjs/package-lock.json
 
-      - name: Install dependencies
+      - name: install dependencies for Backend
+        run: npm ci
+        working-directory: Backend-nestjs
+
+      - name: Install dependencies for Frontend
         run: npm ci
 
       - name: Generate Prisma Client
