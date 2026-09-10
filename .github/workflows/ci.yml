@@ -48,6 +48,19 @@ jobs:
 
       runs-on: ubuntu-latest
 
+      services:
+        postgres:
+          image: postgres:17
+          env:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: NevaGiveUp
+          ports:
+            - 5432:5432
+
+      env:
+        DATABASE_URL: postgresql://postgres:password@localhost:5432/NevaGiveUp
+
       defaults:
         run:
           working-directory: Backend-nestjs
@@ -55,7 +68,6 @@ jobs:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-
         
         - name: Setup Node.js
           uses: actions/setup-node@v4
@@ -63,12 +75,21 @@ jobs:
             node-version: 22
             cache: npm
             cache-dependency-path: Backend-nestjs/package-lock.json
-
+            
         - name: Install dependencies
           run: npm ci
 
         - name: Generate Prisma Client
           run: npx prisma generate --schema=prisma/schema.prisma
+
+        - name: Run Migrations
+          run: npx prisma migrate deploy --schema=prisma/schema.prisma
+
+        - name: Run seed
+          run: npx prisma db seed --schema=prisma/schema.prisma
+
+        - name: Run test E2E
+          run: npm run test:e2e
 
         - name: Build
           run: npm run build
