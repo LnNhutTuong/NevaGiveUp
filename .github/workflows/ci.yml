@@ -61,7 +61,7 @@ jobs:
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:5432/NevaGiveUp
         JWT_SECRET: ci-test-secret-change-me-123456
-        
+
       defaults:
         run:
           working-directory: Backend-nestjs
@@ -82,6 +82,28 @@ jobs:
 
         - name: Generate Prisma Client
           run: npx prisma generate --schema=prisma/schema.prisma
+
+        - name: Wait for PostgresSQL
+          run: |
+            attempt=1
+
+            while [ $attempt -le 15 ]; do
+
+              if pg_isready -h localhost -p 5432; then
+                echo "PostgreSQL is ready!"
+                exit 0
+              fi
+
+              echo "PostgreSQL is not ready yet..."
+
+              sleep 2s
+
+              attempt=$((attempt + 1))
+
+            done
+
+            echo "PostgreSQL did not become ready"
+            exit 1
 
         - name: Run Migrations
           run: npx prisma migrate deploy --schema=prisma/schema.prisma
