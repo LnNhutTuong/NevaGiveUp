@@ -60,7 +60,8 @@ jobs:
 
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:5432/NevaGiveUp
-
+        JWT_SECRET: ci-test-secret-change-me-123456
+        
       defaults:
         run:
           working-directory: Backend-nestjs
