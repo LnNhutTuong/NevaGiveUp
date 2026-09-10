@@ -43,7 +43,7 @@ jobs:
           run: npx prisma generate --schema=../Backend-nestjs/prisma/schema.prisma
 
         - name: Build
-          run: npm run build:testAgainabcxyz
+          run: npm run build:againadasdadwdawdawdawdawdwa
 
   Backend:
 
