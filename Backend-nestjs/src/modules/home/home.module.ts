@@ -5,8 +5,8 @@ import { CoursesModule } from '../courses/courses.module';
 // import { PostsModule } from '../posts/posts.module';
 
 @Module({
-    imports: [CoursesModule],
-    controllers: [HomeController],
-    providers: [HomeService],
+  imports: [CoursesModule],
+  controllers: [HomeController],
+  providers: [HomeService],
 })
-export class HomeModule { }
+export class HomeModule {}

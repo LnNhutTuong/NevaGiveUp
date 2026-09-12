@@ -1,0 +1,19 @@
+    {
+        "extends": "./tsconfig.json", //ke thua config cu tu duong dan
+        "compilerOptions": {
+            "rootDir": ".",  //dung eslint nen phai khai bao root la nguyen folder
+            "types": [
+                "node",
+                "jest"
+            ]
+        },
+        "include":[
+            "src/**/*",
+            "test/**/*"
+        ],
+        "exclude": [
+            "node_modules",
+            "dist",
+            "prisma.config.ts"
+        ]
+    }

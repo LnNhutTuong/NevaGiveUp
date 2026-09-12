@@ -8,6 +8,6 @@ import { AuthorizationModule } from '@/authorization/authorization.module';
   imports: [PrismaModule, AuthorizationModule],
   controllers: [TagsController],
   providers: [TagsService],
-  exports: [TagsService]
+  exports: [TagsService],
 })
-export class TagsModule { }
+export class TagsModule {}

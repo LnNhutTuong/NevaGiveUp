@@ -1,71 +1,65 @@
-
 import {
-    CanActivate,
-    ExecutionContext,
-    ForbiddenException,
-    Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
 } from '@nestjs/common';
 
 import { Reflector } from '@nestjs/core';
 
-import {
-    PERMISSIONS_KEY,
-} from '../../decorator/permissions.decorator';
+import { PERMISSIONS_KEY } from '../../decorator/permissions.decorator';
 import { AuthorizationService } from '../authorization.service';
 
+export type AuthenticatedUser = {
+  id: string;
+  userId: string;
+  username: string;
+  sub: string;
+};
+
+type AuthenticatedRequest = {
+  user: AuthenticatedUser;
+};
+
 @Injectable()
-export class PermissionGuard
-    implements CanActivate {
+export class PermissionGuard implements CanActivate {
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly authorizationService: AuthorizationService,
+  ) {}
 
-    constructor(
-        private readonly reflector: Reflector,
-        private readonly authorizationService:
-            AuthorizationService,
-    ) { }
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
+      PERMISSIONS_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
-    async canActivate(
-        context: ExecutionContext,
-    ): Promise<boolean> {
-
-        const requiredPermissions =
-            this.reflector.getAllAndOverride<string[]>(
-                PERMISSIONS_KEY,
-                [
-                    context.getHandler(),
-                    context.getClass(),
-                ],
-            );
-
-        if (!requiredPermissions?.length) {
-            return true;
-        }
-
-        const request =
-            context.switchToHttp().getRequest();
-
-        const user = request.user;
-        const userId = user?.id ?? user?.userId ?? user?.sub;
-
-        if (!user || !userId) {
-            return false;
-        }
-
-        const userPermissions =
-            await this.authorizationService
-                .getUserPermissions(userId);
-
-        const hasPermission =
-            requiredPermissions.every(
-                permission =>
-                    userPermissions.includes(permission),
-            );
-
-        if (!hasPermission) {
-            throw new ForbiddenException(
-                'Bạn không có quyền truy cập vào tài nguyên này',
-            );
-        }
-
-        return true;
+    if (!requiredPermissions?.length) {
+      return true;
     }
+
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+
+    const user = request.user;
+    const userId = user?.id ?? user?.userId ?? user?.sub;
+
+    if (!user || !userId) {
+      return false;
+    }
+
+    const userPermissions =
+      await this.authorizationService.getUserPermissions(userId);
+
+    const hasPermission = requiredPermissions.every((permission) =>
+      userPermissions.includes(permission),
+    );
+
+    if (!hasPermission) {
+      throw new ForbiddenException(
+        'Bạn không có quyền truy cập vào tài nguyên này',
+      );
+    }
+
+    return true;
+  }
 }

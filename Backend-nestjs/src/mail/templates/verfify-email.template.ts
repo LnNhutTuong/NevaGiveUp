@@ -1,4 +1,7 @@
-export const getVerifyEmailTemplate = (userName: string, otpCode: string): string => {
+export const getVerifyEmailTemplate = (
+  userName: string,
+  otpCode: string,
+): string => {
   return `
 <!DOCTYPE html>
 <html dir="ltr" lang="vi">
