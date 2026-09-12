@@ -1,5 +1,8 @@
-export const getForgotPasswordOTPEmailTemplate = (userName: string, otpCode: string): string => {
-    return `
+export const getForgotPasswordOTPEmailTemplate = (
+  userName: string,
+  otpCode: string,
+): string => {
+  return `
 <!DOCTYPE html>
 <html dir="ltr" lang="vi">
   <head>

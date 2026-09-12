@@ -37,7 +37,9 @@ export class AuthCronService {
         },
       });
 
-      this.logger.log(`Dọn dẹp hoàn tất: Đã xóa ${deleteResult.count} refresh token rác.`);
+      this.logger.log(
+        `Dọn dẹp hoàn tất: Đã xóa ${deleteResult.count} refresh token rác.`,
+      );
     } catch (error) {
       this.logger.error('Lỗi trong quá trình dọn dẹp refresh token:', error);
     }

@@ -1,35 +1,41 @@
-
 import { AuthGuard } from '@nestjs/passport';
 import {
-    ExecutionContext,
-    Injectable,
-    UnauthorizedException,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { IS_PUBLIC_KEY } from '@/decorator/public.decorator';
 import { Reflector } from '@nestjs/core';
+// import type { AuthenticatedUser } from '@/authorization/guards/permission.guard';|
+
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-    constructor(private reflector: Reflector) {
-        super();
+  constructor(private reflector: Reflector) {
+    super();
+  }
+  canActivate(context: ExecutionContext) {
+    // Add your custom authentication logic here
+    // for example, call super.logIn(request) to establish a session.
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
+      return true;
     }
-    canActivate(context: ExecutionContext) {
-        // Add your custom authentication logic here
-        // for example, call super.logIn(request) to establish a session.
-        const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-            context.getHandler(),
-            context.getClass(),
-        ]);
-        if (isPublic) {
-            return true;
-        }
-        return super.canActivate(context);
-    }
+    return super.canActivate(context);
+  }
 
-    handleRequest(err, user, info) {
-        // You can throw an exception based on either "info" or "err" arguments
-        if (err || !user) {
-            throw err || new UnauthorizedException("Bạn không có quyền truy cập. Vui lòng đăng nhập lại.");
-        }
-        return user;
+  handleRequest<TUser>(err, user: TUser) {
+    // You can throw an exception based on either "info" or "err" arguments
+    if (err || !user) {
+      throw (
+        err ||
+        new UnauthorizedException(
+          'Bạn không có quyền truy cập. Vui lòng đăng nhập lại.',
+        )
+      );
     }
+    return user;
+  }
 }

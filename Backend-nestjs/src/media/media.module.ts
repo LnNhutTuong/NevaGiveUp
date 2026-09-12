@@ -4,8 +4,8 @@ import { MediaController } from './media.controller';
 
 @Global()
 @Module({
-    providers: [MediaService],
-    controllers: [MediaController],
-    exports: [MediaService],
+  providers: [MediaService],
+  controllers: [MediaController],
+  exports: [MediaService],
 })
-export class MediaModule { }
+export class MediaModule {}

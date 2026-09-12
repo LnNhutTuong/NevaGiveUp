@@ -1,4 +1,8 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { PrismaService } from '@/prisma/prisma.service';
@@ -6,22 +10,27 @@ import { YoutubeService } from '@/youtube/youtube.service';
 
 @Injectable()
 export class LessonsService {
-  constructor(private prisma: PrismaService, private readonly youtubeService: YoutubeService) { }
+  constructor(
+    private prisma: PrismaService,
+    private readonly youtubeService: YoutubeService,
+  ) {}
   async create(createLessonDto: CreateLessonDto) {
     try {
       const section = await this.prisma.section.findUnique({
         where: {
-          id: createLessonDto.sectionId
-        }
-      })
+          id: createLessonDto.sectionId,
+        },
+      });
       if (!section) {
-        throw new BadRequestException("Không tìm thấy chương")
+        throw new BadRequestException('Không tìm thấy chương');
       }
-      let videoId: string = "";
+      let videoId: string = '';
       let duration: number = 0;
 
       if (createLessonDto.videoUrl) {
-        const ytData = await this.youtubeService.getVideoDetails(createLessonDto.videoUrl);
+        const ytData = await this.youtubeService.getVideoDetails(
+          createLessonDto.videoUrl,
+        );
         videoId = ytData.videoId;
         duration = ytData.duration;
       }
@@ -35,16 +44,15 @@ export class LessonsService {
           sectionId: createLessonDto.sectionId,
           videoId: videoId,
           duration: duration,
-        }
-      })
+        },
+      });
       return lesson;
     } catch (error) {
       if (error instanceof BadRequestException) {
-        throw error
+        throw error;
       }
-      throw new BadRequestException("Lỗi khi tạo bài giảng")
+      throw new BadRequestException('Lỗi khi tạo bài giảng');
     }
-
   }
 
   findAll() {
@@ -55,11 +63,15 @@ export class LessonsService {
     return `This action returns a #${id} lesson`;
   }
 
-  async update(id: number, instructorId: string, updateLessonDto: UpdateLessonDto) {
+  async update(
+    id: number,
+    instructorId: string,
+    updateLessonDto: UpdateLessonDto,
+  ) {
     try {
       const lesson = await this.prisma.lesson.findUnique({
         where: {
-          id: id
+          id: id,
         },
         include: {
           section: {
@@ -67,30 +79,34 @@ export class LessonsService {
               courseId: true,
               course: {
                 select: {
-                  instructorId: true
-                }
-              }
-            }
-          }
-        }
-      })
+                  instructorId: true,
+                },
+              },
+            },
+          },
+        },
+      });
       if (!lesson) {
-        throw new BadRequestException("Không tìm thấy bài giảng")
+        throw new BadRequestException('Không tìm thấy bài giảng');
       }
       if (lesson.section.course.instructorId !== instructorId) {
-        throw new ForbiddenException("Bạn không có quyền cập nhật bài giảng này")
+        throw new ForbiddenException(
+          'Bạn không có quyền cập nhật bài giảng này',
+        );
       }
-      let videoId: string = "";
+      let videoId: string = '';
       let duration: number = 0;
 
       if (updateLessonDto.videoUrl) {
-        const ytData = await this.youtubeService.getVideoDetails(updateLessonDto.videoUrl);
+        const ytData = await this.youtubeService.getVideoDetails(
+          updateLessonDto.videoUrl,
+        );
         videoId = ytData.videoId;
         duration = ytData.duration;
       }
       const updatedLesson = await this.prisma.lesson.update({
         where: {
-          id: id
+          id: id,
         },
         data: {
           title: updateLessonDto.title,
@@ -101,14 +117,17 @@ export class LessonsService {
           sectionId: updateLessonDto.sectionId,
           videoId: videoId,
           duration: duration,
-        }
-      })
+        },
+      });
       return updatedLesson;
     } catch (error) {
-      if (error instanceof BadRequestException || error instanceof ForbiddenException) {
-        throw error
+      if (
+        error instanceof BadRequestException ||
+        error instanceof ForbiddenException
+      ) {
+        throw error;
       }
-      throw new BadRequestException("Lỗi khi cập nhật bài giảng")
+      throw new BadRequestException('Lỗi khi cập nhật bài giảng');
     }
   }
 
@@ -116,7 +135,7 @@ export class LessonsService {
     try {
       const lesson = await this.prisma.lesson.findUnique({
         where: {
-          id: id
+          id: id,
         },
         include: {
           section: {
@@ -124,34 +143,36 @@ export class LessonsService {
               courseId: true,
               course: {
                 select: {
-                  instructorId: true
-                }
-              }
-            }
-          }
-        }
-      })
+                  instructorId: true,
+                },
+              },
+            },
+          },
+        },
+      });
       if (!lesson) {
-        throw new BadRequestException("Không tìm thấy bài giảng")
+        throw new BadRequestException('Không tìm thấy bài giảng');
       }
       if (lesson.section.course.instructorId !== instructorId) {
-        throw new ForbiddenException("Bạn không có quyền xóa bài giảng này")
+        throw new ForbiddenException('Bạn không có quyền xóa bài giảng này');
       }
       await this.prisma.lesson.update({
         where: {
-          id: id
+          id: id,
         },
         data: {
           deletedAt: new Date(),
-        }
-      })
+        },
+      });
       return lesson;
-    }
-    catch (error) {
-      if (error instanceof BadRequestException || error instanceof ForbiddenException) {
-        throw error
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof ForbiddenException
+      ) {
+        throw error;
       }
-      throw new BadRequestException("Lỗi khi xóa bài giảng")
+      throw new BadRequestException('Lỗi khi xóa bài giảng');
     }
   }
 }
